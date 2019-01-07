@@ -1,13 +1,13 @@
-package utils
+package goutils
 
 import (
-	"fmt"
+	//"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetMapSortedKeys(t *testing.T) {
+func TestMapGetSortedKeys(t *testing.T) {
 	map1 := map[string]int{
 		"bj": 3,
 		"ba": 4,
@@ -18,17 +18,15 @@ func TestGetMapSortedKeys(t *testing.T) {
 	res1 := []string{"ac", "ba", "bj", "cc"}
 	res2 := []string{"cc", "bj", "ba", "ac"}
 
-	sortedKeys := GetMapSortedKeys(map1, false)
-	fmt.Println(sortedKeys)
+	sortedKeys := MapGetSortedKeys(map1, false)
 	assert.Equal(t, res1, sortedKeys)
 
-	sortedKeys = GetMapSortedKeys(map1, true)
-	fmt.Println(sortedKeys)
+	sortedKeys = MapGetSortedKeys(map1, true)
 	assert.Equal(t, res2, sortedKeys)
 
 }
 
-func TestGetMapKeys(t *testing.T) {
+func TestMapGetKeys(t *testing.T) {
 	testCases := []struct {
 		name   string
 		input  interface{}
@@ -54,10 +52,72 @@ func TestGetMapKeys(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			o, err := GetMapKeys(tc.input)
+			o, err := MapGetKeys(tc.input)
 			assert.Nil(t, err)
 
 			assert.ElementsMatch(t, o, tc.output)
+		})
+	}
+}
+
+func TestMapStringMerge(t *testing.T) {
+	testCases := []struct {
+		name   string
+		arg1   interface{}
+		arg2   interface{}
+		output interface{}
+	}{
+		{
+			"NotMapString",
+			map[int]string{
+				1: "value",
+			},
+			map[string]string{
+				"key": "value",
+			},
+			"one of 2 two maps is not string map",
+		},
+		{
+			"NotSameTypeMapString",
+			map[string]string{
+				"key": "value",
+			},
+			map[string]bool{
+				"key": true,
+			},
+			"two map are not the same type of string map",
+		},
+		{
+			"MapStringInterface",
+			map[string]interface{}{
+				"key1": 1,
+				"key2": true,
+				"key3": "value3",
+			},
+			map[string]interface{}{
+				"key4": true,
+				"key5": 5,
+				"key2": "value2",
+				"key3": []int{1, 2, 3},
+			},
+			map[string]interface{}{
+				"key1": 1,
+				"key2": "value2",
+				"key3": []int{1, 2, 3},
+				"key4": true,
+				"key5": 5,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			res, err := MapStringMerge(tc.arg1, tc.arg2)
+			if err != nil {
+				assert.Equal(t, tc.output, err.Error())
+			} else {
+				assert.Equal(t, tc.output, res)
+			}
 		})
 	}
 }

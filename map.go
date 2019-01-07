@@ -1,16 +1,19 @@
-package utils
+package goutils
 
 import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
+
+	"github.com/spf13/cast"
 )
 
-// GetMapSortedKeys returns a sorted slice contaning keys of map as interface{}// and need to be casted in the format as you want
+// MapGetSortedKeys returns a sorted slice contaning keys of map as interface{}// and need to be casted in the format as you want
 //
 // This function supports the following type of key: string, int
 // If the given parameter is not a map, it will return nil
-func GetMapSortedKeys(m interface{}, reverse bool) interface{} {
+func MapGetSortedKeys(m interface{}, reverse bool) interface{} {
 	var sortedInts []int
 	var sortedStrings []string
 	//var sortedKeys reflect.Value
@@ -51,8 +54,8 @@ func GetMapSortedKeys(m interface{}, reverse bool) interface{} {
 	return nil
 }
 
-// GetMapKeys returns a slice of keys.
-func GetMapKeys(m interface{}) ([]interface{}, error) {
+// MapGetKeys returns a slice of keys.
+func MapGetKeys(m interface{}) ([]interface{}, error) {
 	var out []interface{}
 
 	v := reflect.ValueOf(m)
@@ -66,4 +69,35 @@ func GetMapKeys(m interface{}) ([]interface{}, error) {
 	}
 
 	return out, nil
+}
+
+// MapStringMerge merges 2 string maps of the same type: map2 in map1.
+//
+// If an element in map1 does not exist, it will be created.
+// Otherwise, it will be overrided by new value in map2
+func MapStringMerge(map1, map2 interface{}) (interface{}, error) {
+	v1 := reflect.ValueOf(map1)
+	v2 := reflect.ValueOf(map2)
+
+	t1 := v1.Type()
+	t2 := v2.Type()
+
+	if !strings.HasPrefix(t1.String(), "map[string]") || !strings.HasPrefix(t2.String(), "map[string]") {
+		return nil, fmt.Errorf("one of 2 two maps is not string map")
+	}
+
+	if t1 != t2 {
+		return nil, fmt.Errorf("two map are not the same type of string map")
+	}
+
+	m1 := cast.ToStringMap(map1)
+	m2 := cast.ToStringMap(map2)
+
+	m := m1
+
+	for k, v := range m2 {
+		m[k] = v
+	}
+
+	return m, nil
 }

@@ -1,4 +1,4 @@
-package utils
+package goutils
 
 import (
 //    "fmt"
@@ -11,12 +11,12 @@ type CompareFunc func(elem1 interface{}, elem2 interface{}) bool
 //func IsElementInArray(elem interface{}, array []interface{}, fn CompareFunc) bool {
 func IsElementInArray(elem interface{}, array []interface{}, fn CompareFunc) bool {
 
-    for _, elm := range array {
-        res := fn(elem, elm)
-        if res == true {
-            return true
-        }
-    }
+	for _, elm := range array {
+		res := fn(elem, elm)
+		if res == true {
+			return true
+		}
+	}
 
-    return false
+	return false
 }
