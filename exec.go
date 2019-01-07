@@ -6,9 +6,9 @@ import (
 	"os/exec"
 )
 
-// ExecCmd executes command shell. It redirects output and errors to standard and then stores in a bytes.
+// ExecCmdPipe executes command shell. It redirects output and errors to standard and then stores in a bytes.
 // It returns command's stdout  and stderr in bytes and error of command execution
-func ExecCmd(command string, args []string, o io.Writer, e io.Writer) ([]byte, []byte, error) {
+func ExecCmdPipe(command string, args []string, o io.Writer, e io.Writer) ([]byte, []byte, error) {
 	var outBuf, errBuf bytes.Buffer
 	//var errStdout, errStderr error
 
