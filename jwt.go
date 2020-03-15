@@ -17,8 +17,9 @@ import (
 
 // JWTToken represents struct containing signing key or jwks°uri
 type JWTToken struct {
-	signKey string
-	jwksURI string
+	signMethod string
+	signKey    string
+	jwksURI    string
 }
 
 var (
@@ -51,19 +52,31 @@ func (t *JWTToken) SetJwksURI(uri string) {
 }
 
 // SetSignKey set signKey to use when jwksURI is not used.
-// Otherwise, it will be computed according to kid & and jwksURI
+// It will be used to sign/verify the token.
 func (t *JWTToken) SetSignKey(key string) {
 	t.signKey = key
 }
 
-// ParseToken parses and checks to see if JWT is valid
+// SetSignMethod set signing method to sign or verify the token
+func (t *JWTToken) SetSignMethod(method string) {
+	t.signMethod = method
+}
+
+// ParseToken parses and checks to see if JWT is valid.
+// If the token is valid, it returns a map of all claims defined
+// in the JWT.
 func (t *JWTToken) ParseToken(tokenString string) (map[string]interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
-		if token.Method != jwt.SigningMethodRS256 {
+		if token.Method != jwt.GetSigningMethod(t.signMethod) {
 			return nil, ErrTokenUnexpectedSigningMethod
 		}
 
+		// If key identifier is defined in the header,
+		// we try to find out the algo and jwks_uri (x5c)
+		// and get the corresponding signing public key.
+		// If the algo is RSA, we also need to convert PEM format
+		// to RSA pub key.
 		kid := cast.ToString(token.Header["kid"])
 		if kid != "" {
 			certChain, err := t.getCertChain(kid)
@@ -77,9 +90,11 @@ func (t *JWTToken) ParseToken(tokenString string) (map[string]interface{}, error
 			}
 		}
 
+		// If key identifier is not defined, we use signKey instead.
 		return []byte(t.signKey), nil
 	})
 
+	// Check token'ts validity according to some criterons.
 	if err != nil {
 		if e, ok := err.(*jwt.ValidationError); ok {
 			switch {
