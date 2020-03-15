@@ -15,23 +15,11 @@ import (
 	"github.com/spf13/cast"
 )
 
-// CustomClaims represents the Azure JWT token
-type CustomClaims struct {
-	UPN    string   `json:"upn"`
-	Groups []string `json:"groups"`
-
-	jwt.StandardClaims
-}
-
 // JWTToken represents struct containing signing key or jwks°uri
 type JWTToken struct {
 	signKey string
 	jwksURI string
 }
-
-//const (
-//azurePublicKeysURL = "https://login.microsoftonline.com/common/discovery/keys"
-//)
 
 var (
 	// ErrTokenInvalid denotes a token was not able to be validated.
