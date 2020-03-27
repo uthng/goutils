@@ -1,7 +1,9 @@
 package goutils
 
 import (
+	"fmt"
 	"regexp"
+	"strings"
 )
 
 // StringStripAnsi removes ANSI escape code from string
@@ -11,4 +13,32 @@ func StringStripAnsi(str string) string {
 	var re = regexp.MustCompile(ansi)
 
 	return re.ReplaceAllString(str, "")
+}
+
+// StringConvertToMap converts a string composed of key/value elements
+// separated by a separator to a map. By default, the separator for key and value is ":"
+// and the separator for each key/value element is ";"
+func StringConvertToMapSimple(str, elSep, kvSep string) (map[string]interface{}, error) {
+	m := make(map[string]interface{})
+
+	arrElems := strings.Split(str, elSep)
+	for _, el := range arrElems {
+		arrKVs := strings.SplitN(el, kvSep, 2)
+		if len(arrKVs) != 2 {
+			return nil, fmt.Errorf("key/value element '%s' malformatted. Key and value must be separated by '%s'", el, kvSep)
+		}
+
+		if strings.Contains(arrKVs[1], kvSep) {
+			arr, err := StringConvertToMapSimple(arrKVs[1], elSep, kvSep)
+			if err != nil {
+				return nil, err
+			}
+
+			m[arrKVs[0]] = arr
+		} else {
+			m[arrKVs[0]] = arrKVs[1]
+		}
+	}
+
+	return m, nil
 }
