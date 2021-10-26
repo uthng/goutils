@@ -15,7 +15,7 @@ func StringStripAnsi(str string) string {
 	return re.ReplaceAllString(str, "")
 }
 
-// StringConvertToMap converts a string composed of key/value elements
+// StringConvertToMapSimple converts a string composed of key/value elements
 // separated by a separator to a map. By default, the separator for key and value is ":"
 // and the separator for each key/value element is ";"
 func StringConvertToMapSimple(str, elSep, kvSep string) (map[string]interface{}, error) {
@@ -41,4 +41,30 @@ func StringConvertToMapSimple(str, elSep, kvSep string) (map[string]interface{},
 	}
 
 	return m, nil
+}
+
+// StringBuild concatenates strings together
+func StringBuild(strs ...string) string {
+	var sb strings.Builder
+
+	for _, str := range strs {
+		sb.WriteString(str)
+	}
+
+	return sb.String()
+}
+
+// StringBuildWithSep concatenates strings together with a separator
+func StringBuildWithSep(sep rune, strs ...string) string {
+	var sb strings.Builder
+
+	for idx, str := range strs {
+		sb.Write([]byte(str))
+
+		if idx < len(strs)-1 {
+			sb.WriteRune(sep)
+		}
+	}
+
+	return sb.String()
 }

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/uthng/goutils"
 )
@@ -97,6 +98,29 @@ func TestStringConvertToMapSimple(t *testing.T) {
 
 			assert.Nil(t, err)
 			assert.Equal(t, tc.result, m)
+		})
+	}
+}
+
+func TestStringBuildWithSep(t *testing.T) {
+	testCases := []struct {
+		name   string
+		strs   []string
+		sep    rune
+		result string
+	}{
+		{
+			"OK",
+			[]string{"a", "b", "c", "d"},
+			';',
+			"a;b;c;d",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := goutils.StringBuildWithSep(tc.sep, tc.strs...)
+			require.Equal(t, tc.result, result)
 		})
 	}
 }
