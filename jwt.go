@@ -5,13 +5,14 @@ import (
 	//"fmt"
 	"encoding/json"
 	"strings"
+
 	//"encoding/pem"
 	"net/http"
 
 	"crypto/rsa"
 	//"crypto/x509"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/spf13/cast"
 )
 

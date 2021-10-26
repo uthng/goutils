@@ -28,7 +28,7 @@ func TestParseToken(t *testing.T) {
 			"RS256",
 			"",
 			"https://login.microsoftonline.com/common/discovery/keys",
-			goutils.ErrTokenExpired,
+			goutils.ErrTokenKidNotFound,
 		},
 		{
 			"ErrTokenMalformed",
