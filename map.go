@@ -15,6 +15,7 @@ import (
 // If the given parameter is not a map, it will return nil
 func MapGetSortedKeys(m interface{}, reverse bool) interface{} {
 	var sortedInts []int
+
 	var sortedStrings []string
 	//var sortedKeys reflect.Value
 
@@ -30,7 +31,8 @@ func MapGetSortedKeys(m interface{}, reverse bool) interface{} {
 		for _, val := range mValue.MapKeys() {
 			sortedStrings = append(sortedStrings, val.Interface().(string))
 		}
-		if reverse == false {
+
+		if !reverse {
 			sort.Strings(sortedStrings)
 		} else {
 			sort.Sort(sort.Reverse(sort.StringSlice(sortedStrings)))
@@ -42,7 +44,8 @@ func MapGetSortedKeys(m interface{}, reverse bool) interface{} {
 		for _, val := range mValue.MapKeys() {
 			sortedInts = append(sortedInts, int(val.Int()))
 		}
-		if reverse == false {
+
+		if !reverse {
 			sort.Ints(sortedInts)
 		} else {
 			sort.Sort(sort.Reverse(sort.IntSlice(sortedInts)))
@@ -100,4 +103,23 @@ func MapStringMerge(map1, map2 interface{}) (interface{}, error) {
 	}
 
 	return m, nil
+}
+
+// MapRemoveNulls removes all fields with nil value
+func MapRemoveNulls(m map[string]interface{}) {
+	val := reflect.ValueOf(m)
+
+	for _, e := range val.MapKeys() {
+		v := val.MapIndex(e)
+		if v.IsNil() {
+			delete(m, e.String())
+			continue
+		}
+
+		switch t := v.Interface().(type) {
+		// If key is a JSON object (Go Map), use recursion to go deeper
+		case map[string]interface{}:
+			MapRemoveNulls(t)
+		}
+	}
 }

@@ -23,7 +23,6 @@ func TestMapGetSortedKeys(t *testing.T) {
 
 	sortedKeys = MapGetSortedKeys(map1, true)
 	assert.Equal(t, res2, sortedKeys)
-
 }
 
 func TestMapGetKeys(t *testing.T) {
@@ -118,6 +117,49 @@ func TestMapStringMerge(t *testing.T) {
 			} else {
 				assert.Equal(t, tc.output, res)
 			}
+		})
+	}
+}
+
+func TestMapRemoveNulls(t *testing.T) {
+	testCases := []struct {
+		name   string
+		input  map[string]interface{}
+		output map[string]interface{}
+	}{
+		{
+			"OKRemoveNulls",
+			map[string]interface{}{
+				"key1": nil,
+				"key2": 2,
+				"key3": []int{1, 2, 3},
+				"key4": map[string]interface{}{
+					"key41": nil,
+					"key42": map[string]interface{}{
+						"key421": "val421",
+						"key422": nil,
+					},
+				},
+			},
+			map[string]interface{}{
+				"key2": 2,
+				"key3": []int{1, 2, 3},
+				"key4": map[string]interface{}{
+					"key42": map[string]interface{}{
+						"key421": "val421",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			m := tc.input
+
+			MapRemoveNulls(m)
+
+			assert.Equal(t, tc.output, m)
 		})
 	}
 }
