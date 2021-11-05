@@ -124,3 +124,70 @@ func TestStringBuildWithSep(t *testing.T) {
 		})
 	}
 }
+
+func TestStringParseFloat(t *testing.T) {
+	testCases := []struct {
+		name   string
+		str    string
+		result float64
+	}{
+		{
+			"1E2",
+			"1E2",
+			100,
+		},
+		{
+			"1E-5",
+			"1E-5",
+			0.00001,
+		},
+		{
+			"1.6543E2",
+			"1.6543E2",
+			165.43,
+		},
+		{
+			"0.89E2",
+			"0.89E2",
+			89,
+		},
+		{
+			"1.6543E-2",
+			"1.6543E-2",
+			0.016543,
+		},
+		{
+			"156,819,129",
+			"156,819,129",
+			156819129,
+		},
+		{
+			"156819129",
+			"156819129",
+			156819129,
+		},
+		{
+			".1E0",
+			".1E0",
+			0.1,
+		},
+		{
+			".1E1",
+			".1E1",
+			1,
+		},
+		{
+			"OE1",
+			"0E1",
+			0,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := goutils.StringParseFloat(tc.str)
+			require.Nil(t, err)
+			require.Equal(t, tc.result, result)
+		})
+	}
+}
