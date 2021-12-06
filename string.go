@@ -100,15 +100,18 @@ func StringParseFloat(str string) (float64, error) {
 	}
 
 	var baseVal float64
+
 	var expVal int64
 
 	baseStr := str[0:pos]
+
 	baseVal, err = strconv.ParseFloat(baseStr, 64)
 	if err != nil {
 		return 0, err
 	}
 
 	expStr := str[(pos + 1):]
+
 	expVal, err = strconv.ParseInt(expStr, 10, 64)
 	if err != nil {
 		return 0, err

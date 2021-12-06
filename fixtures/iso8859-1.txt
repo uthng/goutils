@@ -1,0 +1,2 @@
+Prénom;Nom;Société;email;;;
+abcàâäéèêë;îôöùûüabç;Money?$£;lucile.riviere+testCSV@plezi.co;;;
