@@ -20,6 +20,8 @@ var encodings = map[string]struct {
 	"utf-8":              {encoding.Nop, "utf-8"},
 	"utf8":               {encoding.Nop, "utf-8"},
 	"utf8mb4":            {encoding.Nop, "utf-8"},
+	"utf-8bom":           {unicode.UTF8BOM, "utf-8bom"},
+	"utf-8-bom":          {unicode.UTF8BOM, "utf-8bom"},
 	"binary":             {encoding.Nop, "binary"},
 	"866":                {charmap.CodePage866, "ibm866"},
 	"cp866":              {charmap.CodePage866, "ibm866"},

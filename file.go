@@ -31,10 +31,18 @@ func FileGuessEncoding(bytes []byte) string {
 		strQ = strQ[0 : len(strQ)-1]
 	}
 
-	// If utf-8, it must contain \uxxxx
-	re := regexp.MustCompile(`\\u[a-z0-9]{4}`)
+	// If utf-8-bom, it must start with \ufeff
+	re := regexp.MustCompile(`^\\ufeff`)
 
 	found := re.MatchString(strQ)
+	if found {
+		return "utf-8bom"
+	}
+
+	// If utf-8, it must contain \uxxxx
+	re = regexp.MustCompile(`\\u[a-z0-9]{4}`)
+
+	found = re.MatchString(strQ)
 	if found {
 		return "utf-8"
 	}

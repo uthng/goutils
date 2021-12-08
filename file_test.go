@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	//"strings"
 
+	"fmt"
 	"io"
 	"os"
 	"testing"
@@ -23,7 +24,8 @@ func TestFileGuessEncoding(t *testing.T) {
 		{
 			"iso-8859-1",
 			"iso8859-1.txt",
-			"oh! ¦ is cheaper than ¼",
+			`Prénom;Nom;Société;email;;;
+abcàâäéèêë;îôöùûüabç;Money?$£;nom.prenom+testCSV@toto.co;;;`,
 		},
 		//{
 		//"ascii",
@@ -48,15 +50,18 @@ func TestFileGuessEncoding(t *testing.T) {
 		{
 			"utf-16le",
 			"utf-16le.txt",
-			`\\ufeffpremiÈre is first
-première is slightly different
-Кириллица is Cyrillic
-𐐀 am Deseret`,
+			"\ufeffpremiÈre is first\npremière is slightly different\nКириллица is Cyrillic\n𐐀 am Deseret",
 		},
 		{
 			"utf-8",
 			"utf8.txt",
 			"10€ est chère",
+		},
+		{
+			"utf-8bom",
+			"utf8-bom.csv",
+			`Prénom;Nom;email;Téléphone;Intérêts
+Luçile;Rivière;lucile.riviere+pc@plezi.co;+33145048955;cheval`,
 		},
 		//{
 		//"iso-8859-15",
@@ -67,7 +72,7 @@ première is slightly different
 			"windows-1252",
 			"windows-1252.csv",
 			`Prénom;Nom;Société;email;;;
-abcàâäéèêë;îôöùûüabç;Money€$£;lucile.riviere+testCSV@plezi.coœ;;;`,
+abcàâäéèêë;îôöùûüabç;Money€$£;lucile.riviere+testCSV@plezi.co;;;`,
 		},
 		//{
 		//"cp865",
@@ -92,6 +97,8 @@ abcàâäéèêë;îôöùûüabç;Money€$£;lucile.riviere+testCSV@plezi.coœ
 			//fmt.Printf("hex: % x\n", b)
 			//fmt.Printf("uni: %#U\n", b)
 			enc := goutils.FileGuessEncoding(b)
+
+			fmt.Println("enc", enc)
 
 			r, err := goutils.BytesConvertToUTF8(b, enc)
 			require.Nil(t, err)
